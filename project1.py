@@ -32,38 +32,22 @@ def get_parents(node, graph):  # return the parents of a node in list form
         return list(graph.predecessors(node))
 
 
-def p_instantiations(parents, nodes, data):  # return list of lists of parental instantiation permutations in order
+def p_instantiations(parents, nodes, data): # return list of lists of parental instantiation permutations in order
     num_parents = len(parents)
     instants, matrix = [], []
     for i in range(num_parents):
         instants.append(get_num_instantiations(parents[i], nodes, data))
+    # base case: only one parent; return instantiations
     if num_parents == 1:
         for i in range(1, instants[0] + 1):
             row = [i]
             matrix.append(row)
         return matrix
-    if num_parents == 2:
-        for i in range(1, instants[0] + 1):
-            for j in range(1, instants[1] + 1):
-                row = [i, j]
-                matrix.append(row)
-        return matrix
-    if num_parents == 3:
-        for i in range(1, instants[0] + 1):
-            for j in range(1, instants[1] + 1):
-                for k in range(1, instants[2] + 1):
-                    row = [i, j, k]
-                    matrix.append(row)
-        return matrix
-    if num_parents == 4:
-        for i in range(1, instants[0] + 1):
-            for j in range(1, instants[1] + 1):
-                for k in range(1, instants[2] + 1):
-                    for p in range(1, instants[3] + 1):
-                        row = [i, j, k, p]
-                        matrix.append(row)
-        return matrix
     else:
+        remaining_p_instants = p_instantiations(parents[1:], nodes, data)  # get instants for remaining parents
+        for i in range(1, instants[0] + 1):  # iterate through instants of first parent
+            for j in remaining_p_instants:  # iterate through instants of remaining parents
+                matrix.append([i] + j)  # combine val of first parent with list of instants for remaining parents
         return matrix
 
 
